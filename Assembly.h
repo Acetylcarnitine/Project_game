@@ -20,6 +20,26 @@ public:
     void set(float x, float y);
 };
 
+class MushRoom : public Coin {
+public:
+    bool scored;
+    Clock active;
+    int type;
+    Text time;
+
+    MushRoom();
+
+    MushRoom(Texture &image, int _type_, Font &font);
+
+    void activate(Player &player);
+
+    int get_time();
+
+    void draw_time(RenderWindow* window);
+
+    void update();
+};
+
 class Bonus {
 public:
     FloatRect rect;
@@ -36,26 +56,8 @@ public:
     void delete_from_map(std::string *TileMap);
     // если бонус собран, то мы замeняем его на монетку
     void emplace_with_coin(std::vector<Coin *> &coins, Texture &image);
-};
 
-class MushRoom : public Coin {
-public:
-    bool scored;
-    Clock active;
-    int type;
-    Text time;
-
-    MushRoom();
-
-    MushRoom(Texture &image, int _type_, Font &font);
-
-    void activate();
-
-    int get_time();
-
-    void draw_time(RenderWindow* window);
-
-    void update(std::vector<MushRoom*> &mushRooms, int index, Player &player);
+    void emplace_with_mushroom(std::vector<MushRoom *> &mushRooms, Texture &image, Font &font);
 };
 
 #endif //HELLOSFML_ASSEMBLY_H

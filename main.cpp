@@ -293,7 +293,7 @@ public:
         }
 
         for (size_t i = 0; i < mushRooms.size(); i++) {
-            mushRooms[i]->update(mushRooms, i, player);
+            mushRooms[i]->update();
         }
     }
 
@@ -349,8 +349,8 @@ public:
         }
 
         for (auto &mush : mushRooms) {
-            if (mush->rect.intersects(player.rect) && !mush->scored) {
-                mush->activate();
+            if (mush->rect.intersects(player.rect) && !mush->scored && !player.tripin) {
+                mush->activate(player);
                 player.tripin = true;
             }
         }
@@ -477,12 +477,24 @@ public:
         for (size_t i = 0; i < bonuses.size(); i++) {
             if (bonuses[i]->rect.top <= bonuses[i]->max_cordY) {
                 bonuses[i]->delete_from_map(TileMap);
-                bonuses[i]->emplace_with_coin(coins, con);
+                if (random_from(1, 5) != 1 || player.tripin) {
+                    bonuses[i]->emplace_with_coin(coins, con);
+                } else {
+                    bonuses[i]->emplace_with_mushroom(mushRooms, items, font);
+                }
                 delete bonuses[i];
                 bonuses.erase(bonuses.begin() + i);
                 if (player.Life < 2 && player.Life > 1) {
                     player.Life++;
                 }
+            }
+        }
+
+        for (size_t i = 0; i < mushRooms.size(); i++) {
+            if (mushRooms[i]->scored && mushRooms[i]->get_time() >= 5000) {
+                delete mushRooms[i];
+                mushRooms.erase(mushRooms.begin() + i);
+                player.tripin = false;
             }
         }
     }

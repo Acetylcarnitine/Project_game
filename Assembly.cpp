@@ -67,6 +67,12 @@ void Bonus::emplace_with_coin(std::vector<Coin *> &coins, Texture &image) {
     coins.push_back(coin);
 }
 
+void Bonus::emplace_with_mushroom(std::vector<MushRoom *> &mushRooms, Texture &image, Font &font) {
+    MushRoom *mush = new MushRoom(image, 0, font);
+    mush->set(rect.left, rect.top);
+    mushRooms.push_back(mush);
+}
+
 MushRoom::MushRoom() {
     rect = {0, 0, 15, 16};
     scored = false;
@@ -82,9 +88,11 @@ MushRoom::MushRoom(Texture &image, int _type_, Font &font) : Coin(image) {
     time.setPosition(10, 40);
 }
 
-void MushRoom::activate() {
-    active.restart();
-    scored = true;
+void MushRoom::activate(Player &player) {
+    if (!player.tripin) {
+        active.restart();
+        scored = true;
+    }
 }
 
 int MushRoom::get_time() {
@@ -99,11 +107,6 @@ void MushRoom::draw_time(RenderWindow* window) {
     window->draw(time);
 }
 
-void MushRoom::update(std::vector<MushRoom*> &mushRooms, int index, Player &player) {
-    if (get_time() / 1000 >= 5) {
-        mushRooms.erase(mushRooms.begin() + index);
-        delete this;
-        player.tripin = false;
-        std::cout << "\n" << "aboba";
-    }
+void MushRoom::update() {
+    s.setPosition(rect.left - offsetX, rect.top);
 }
