@@ -38,7 +38,7 @@ void Goomba::set(Texture &image, int x, int y, std::string *TileMap) {
 }
 
 void Goomba::update(float time, Player &p, std::string *TileMap) {
-    if (alive && walls.first * 16 - offsetX < 912 && walls.second * 16 - offsetX > 0) {
+    if (alive && is_in_view()) {
         rect.left += dx * time;
 
         if (p.rect.left > walls.first * 16 && p.rect.left < walls.second * 16 && p.rect.top <= rect.top) {
@@ -117,7 +117,7 @@ void KoopaTroopa::jump() {
 }
 
 void KoopaTroopa::update(float time, Player &player, std::string *TileMap) {
-    if (alive && walls.first * 16 - offsetX < 912 && walls.second * 16 - offsetX > 0) {
+    if (alive && is_in_view()) {
         rect.left += dx * time;
         Collision(0, TileMap);
 

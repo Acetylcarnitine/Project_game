@@ -32,6 +32,14 @@ void Coin::update(float &time) {
     s.setPosition(rect.left - offsetX, rect.top);
 }
 
+bool Coin::is_in_view() {
+    if (rect.left <= offsetX + 700 && rect.left + rect.width >= offsetX) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 Bonus::Bonus(Texture &image) {
     rect = {0, 0, 16, 16};
     scored = false;
@@ -71,6 +79,14 @@ void Bonus::emplace_with_mushroom(std::vector<MushRoom *> &mushRooms, Texture &i
     MushRoom *mush = new MushRoom(image, 0, font);
     mush->set(rect.left, rect.top);
     mushRooms.push_back(mush);
+}
+
+bool Bonus::is_in_view() {
+    if (rect.left <= offsetX + 700 && rect.left + rect.width >= offsetX) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 MushRoom::MushRoom() {

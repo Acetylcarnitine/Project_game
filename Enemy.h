@@ -16,6 +16,14 @@ public:
     float disappear;                // переменная для отслеживания удалять противника или нет
     Sprite sprite;
 
+    bool is_in_view() {
+        if (walls.first * 16 - offsetX < 912 && walls.second * 16 - offsetX > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     virtual void set(Texture &image, int x, int y, std::string *TileMap) {}
 
     virtual void update(float time, Player &p, std::string *TileMap) {}

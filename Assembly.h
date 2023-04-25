@@ -18,6 +18,8 @@ public:
     void update(float &time);
     // функция для задания позиции монетки на экране
     void set(float x, float y);
+
+    bool is_in_view();
 };
 
 class MushRoom : public Coin {
@@ -58,6 +60,8 @@ public:
     void emplace_with_coin(std::vector<Coin *> &coins, Texture &image);
 
     void emplace_with_mushroom(std::vector<MushRoom *> &mushRooms, Texture &image, Font &font);
+
+    bool is_in_view();
 };
 
 #endif //HELLOSFML_ASSEMBLY_H

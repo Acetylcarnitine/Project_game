@@ -49,7 +49,18 @@ public:
 
     Game() {
         level = 1;
+        loadTextures();
+        jump.setBuffer(buffer);
+        fl.setTexture(flag);
+        fl.setTextureRect(IntRect(10, 8, 56, 396));
+        fl.setScale(0.5, 0.5);
+        fl.setPosition(1300, (H - 3) * 16 - 396 * 0.5);
 
+        start = false;
+        menuNum = 0;
+    }
+
+    void loadTextures() {
         buttons.loadFromFile("images/buttons.png");
         backGround.loadFromFile("images/emptyground.png");
         move.loadFromFile("images/clouds.png");
@@ -61,16 +72,6 @@ public:
 
         music.openFromFile("sounds/music.ogg");
         buffer.loadFromFile("sounds/jump.ogg");
-
-        jump.setBuffer(buffer);
-
-        fl.setTexture(flag);
-        fl.setTextureRect(IntRect(10, 8, 56, 396));
-        fl.setScale(0.5, 0.5);
-        fl.setPosition(1300, (H - 3) * 16 - 396 * 0.5);
-
-        start = false;
-        menuNum = 0;
     }
 
     void init_game() {
@@ -100,6 +101,7 @@ public:
         enemies.clear();
         coins.clear();
         bonuses.clear();
+        mushRooms.clear();
         // загрузка карты и расстановка врагов, собираемых элементов (монетки, бонусы) по ней
         std::ifstream in(define_current_level());
         if (in.is_open()) {
@@ -130,7 +132,7 @@ public:
                     }
 
                     if (TileMap[i][cell] == 'u') {
-                        MushRoom* mush = new MushRoom(items, 0, font);
+                        MushRoom *mush = new MushRoom(items, 0, font);
                         mush->set(cell * 16, i * 16);
                         mushRooms.push_back(mush);
                     }
@@ -221,6 +223,9 @@ public:
 
         FinishMenu.add_button(*next);
         FinishMenu.add_button(*main_menu);
+
+        delete next;
+        delete main_menu;
     }
 
     // функция отображения меню в зависисмости от значения menuNum
@@ -299,14 +304,16 @@ public:
 
     void check_enemy_intersection() {
         for (auto &i: enemies) {
-            if (player.rect.intersects(i->rect) && i->alive) {
-                if (player.dy > 0) {
-                    player.dy = -0.2;
-                    player.score += 100;
-                    i->alive = false;
-                } else if (!player.tripin) {
-                    player.dy = -0.2;
-                    player.Life -= 0.015;
+            if (i->is_in_view() && i->alive) {
+                if (player.rect.intersects(i->rect)) {
+                    if (player.dy > 0) {
+                        player.dy = -0.2;
+                        player.score += 100;
+                        i->alive = false;
+                    } else if (!player.tripin) {
+                        player.dy = -0.2;
+                        player.Life -= 0.015;
+                    }
                 }
             }
         }
@@ -334,7 +341,7 @@ public:
 
     void check_claim() {
         for (size_t i = 0; i < coins.size(); i++) {
-            if (player.rect.intersects(coins[i]->rect)) {
+            if (player.rect.intersects(coins[i]->rect) && coins[i]->is_in_view()) {
                 player.score += 20;
                 delete coins[i];
                 coins.erase(coins.begin() + i);
@@ -342,13 +349,15 @@ public:
         }
 
         for (size_t i = 0; i < bonuses.size(); i++) {
-            FloatRect hit_box = FloatRect(player.rect.left, player.rect.top - 2, 17, 17);
-            if (hit_box.intersects(bonuses[i]->rect) && player.rect.top > bonuses[i]->rect.top) {
-                bonuses[i]->scored = true;
+            if (bonuses[i]->is_in_view()) {
+                FloatRect hit_box = FloatRect(player.rect.left, player.rect.top - 2, 17, 17);
+                if (hit_box.intersects(bonuses[i]->rect) && player.rect.top > bonuses[i]->rect.top) {
+                    bonuses[i]->scored = true;
+                }
             }
         }
 
-        for (auto &mush : mushRooms) {
+        for (auto &mush: mushRooms) {
             if (mush->rect.intersects(player.rect) && !mush->scored && !player.tripin) {
                 mush->activate(player);
                 player.tripin = true;
@@ -512,7 +521,7 @@ public:
             window->draw(coin->s);
         }
 
-        for (auto &item : mushRooms) {
+        for (auto &item: mushRooms) {
             if (!item->scored) {
                 window->draw(item->s);
             } else {
@@ -533,6 +542,9 @@ public:
 
     void clear() {
         enemies.clear();
+        coins.clear();
+        bonuses.clear();
+        mushRooms.clear();
         TileMap->clear();
     }
 
