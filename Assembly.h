@@ -31,7 +31,7 @@ public:
 
     MushRoom();
 
-    MushRoom(Texture &image, int _type_, Font &font);
+    MushRoom(Texture &image, Font &font);
 
     void activate(Player &player);
 
