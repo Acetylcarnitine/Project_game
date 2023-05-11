@@ -76,7 +76,7 @@ void Bonus::emplace_with_coin(std::vector<Coin *> &coins, Texture &image) {
 }
 
 void Bonus::emplace_with_mushroom(std::vector<MushRoom *> &mushRooms, Texture &image, Font &font) {
-    MushRoom *mush = new MushRoom(image, 0, font);
+    MushRoom *mush = new MushRoom(image, font);
     mush->set(rect.left, rect.top);
     mushRooms.push_back(mush);
 }
