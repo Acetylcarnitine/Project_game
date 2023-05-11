@@ -132,7 +132,7 @@ public:
                     }
 
                     if (TileMap[i][cell] == 'u') {
-                        MushRoom *mush = new MushRoom(items, 0, font);
+                        MushRoom *mush = new MushRoom(items, font);
                         mush->set(cell * 16, i * 16);
                         mushRooms.push_back(mush);
                     }
